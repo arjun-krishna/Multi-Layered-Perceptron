@@ -1,5 +1,5 @@
-from MLP 					import *
-from DataHandler 	import *
+from MLP import *
+from DataHandler import *
 
 dh = DataHandler()
 
