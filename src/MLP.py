@@ -60,7 +60,7 @@ class MLP :
 		return self.a[self.nl]
 
 	"""
-	max_epoch - Maximum training epochs
+	max_iteration - Maximum training iterations
 	freq_test_loss - The frequency with which we log the test performance.
 	name - The folder (in log dir) in which progress logs will be stored  
 	alpha - Learning rate
@@ -69,7 +69,7 @@ class MLP :
 	lrf   - The decay factor
 	lr_itr - The iteration after which decay occurs
 	"""
-	def train_mini_batch(self, data_handler,name='model_1',act='sigmoid', max_epoch=10000, freq_test_loss = 200, alpha=0.01, lamda=0.005, gamma=0.8, lrf=1.0, lr_itr=250) :
+	def train_mini_batch(self, data_handler,name='model_1',act='sigmoid', max_iteration=10000, freq_test_loss = 200, alpha=0.01, lamda=0.005, gamma=0.8, lrf=1.0, lr_itr=250) :
 
 		SCALER = data_handler.scaler
 
@@ -88,9 +88,9 @@ class MLP :
 		test_loss_log = open('log/'+name+'/test_loss.csv','w')
 		test_acc_log = open('log/'+name+'/test_acc.csv','w')
 
-		train_loss_log.write('epoch, train_loss\n')
-		test_loss_log.write('epoch, test_loss\n')
-		test_acc_log.write('epoch, test_accuracy\n')
+		train_loss_log.write('iteration, train_loss\n')
+		test_loss_log.write('iteration, test_loss\n')
+		test_acc_log.write('iteration, test_accuracy\n')
 
 		config_log.write('Activation = '+act+'\n')
 		config_log.write('Alpha  = '+str(alpha)+'\n')
@@ -104,17 +104,17 @@ class MLP :
 			vb[l] = np.zeros(self.b[l].shape)
 
 
-		for epoch in range(1, max_epoch+1) :
+		for iteration in range(1, max_iteration+1) :
 
-			mssg = "Training Progress [{}%]".format(float(epoch*100)/max_epoch)
+			mssg = "Training Progress [{}%]".format(float(iteration*100)/max_iteration)
 			clear = "\b"*(len(mssg))
 			print(mssg, end="")
 
-			if (epoch % lr_itr == 0) :
+			if (iteration % lr_itr == 0) :
 				alpha = alpha*lrf
 
 
-			if (epoch % freq_test_loss == 0) :
+			if (iteration % freq_test_loss == 0) :
 				test_acc = 0.0
 				test_loss = 0.0
 
@@ -126,8 +126,8 @@ class MLP :
 
 				test_loss /= TEST_SIZE
 
-				test_acc_log.write(str(epoch)+','+str((test_acc*100)/TEST_SIZE)+'\n')
-				test_loss_log.write(str(epoch)+','+str(test_loss)+'\n')
+				test_acc_log.write(str(iteration)+','+str((test_acc*100)/TEST_SIZE)+'\n')
+				test_loss_log.write(str(iteration)+','+str(test_loss)+'\n')
 			
 			X, Y = data_handler.get_train_batch()
 			X = SCALER.transform(X)
@@ -143,7 +143,7 @@ class MLP :
 
 			train_loss /= BATCH_SIZE
 
-			train_loss_log.write(str(epoch)+','+str(train_loss)+'\n')
+			train_loss_log.write(str(iteration)+','+str(train_loss)+'\n')
 
 			delta[self.nl] = _y - y
 
